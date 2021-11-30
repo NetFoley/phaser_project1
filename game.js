@@ -1,21 +1,76 @@
 let cursors;
 let aliens = [];
 let scene = undefined;
-let money = 5000;
-let globalMoney = 100000;
+let moveToCursor = false;
+let mouseX = 0;
+let mouseY = 0;
+let alienAlive = 0;
+let humanAlive = 1;
+let currentLevel = 0;
+
 let entityCost = 15;
 let lifeCost = 5;
 let detectRangeCost = 1;
 let rangeCost = 10;
 let damageCost = 10;
-let attackDelayCost = 200;
+let attackDelayCost = 300;
 let callForHelpCost = 150;
-let canChargeCost = 150;
-let zombieCost = 300;
-let moveToCursor = false;
-let mouseX = 0;
-let mouseY = 0;
+let canChargeCost = 750;
+let zombieCost = 2000;
 
+
+    let levels = [{
+      "globalMoney": 50000,
+      "money": 2000,
+      "nbr": 0,
+      "life": 100,
+      "detect": 200,
+      "range": 10,
+      "damage": 5,
+      "attackDelay": 0.2,
+      "callForHelp": false,
+      "canCharge": false,
+      "zombie": false
+    },
+    {
+      "globalMoney": 100000,
+      "money": 3000,
+      "nbr": 0,
+      "life": 100,
+      "detect": 50,
+      "range": 10,
+      "damage": 10,
+      "attackDelay": 0.3,
+      "callForHelp": false,
+      "canCharge": false,
+      "zombie": false},
+    {
+      "globalMoney": 120000,
+      "money": 5000,
+      "nbr": 50,
+      "life": 200,
+      "detect": 200,
+      "range": 20,
+      "damage": 5,
+      "attackDelay": 0.4,
+      "callForHelp": true,
+      "canCharge": false,
+      "zombie": false},
+    {
+      "globalMoney": 150000,
+      "money": 5000,
+      "nbr": 1,
+      "life": 10000,
+      "detect": 500,
+      "range": 150,
+      "damage": 100,
+      "attackDelay": 2,
+      "callForHelp": true,
+      "canCharge": true,
+      "zombie": false}
+  ];
+let money = levels[currentLevel].money;
+let globalMoney = levels[currentLevel].globalMoney;
 function create()
 {
     scene = this;
@@ -44,10 +99,22 @@ function create()
 
   this.add.image(500, 400, 'sky');
 
-  for(let i = 0; i < 200; i++)
-    addCharacter("human");
+  for(let i = 0; i < levels[currentLevel].nbr; i++)
+    addCharacter("human",
+    levels[currentLevel].life,
+    levels[currentLevel].detect,
+    levels[currentLevel].range,
+    levels[currentLevel].damage,
+    levels[currentLevel].attackDelay,
+    levels[currentLevel].callForHelp,
+    levels[currentLevel].canCharge,
+    levels[currentLevel].zombie
+  );
 
+  money = levels[currentLevel].money;
+  globalMoney = levels[currentLevel].globalMoney;
 
+  updateArmyMoney();
   let repartitionBox = document.getElementById("repartitionBox");
   for(let i = 0; i< repartitionBox.children.length; i++){
       if(repartitionBox.children[i].tagName == "INPUT"){
@@ -58,7 +125,7 @@ function create()
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_detectRangeInput").value,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_rangeInput").value,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_damageInput").value,
-          document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_attackDelayInput").value.value,
+          document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_attackDelayInput").value,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_callForHelpCheck").checked,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_canChargeCheck").checked,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_zombieCheck").checked
@@ -78,6 +145,7 @@ function create()
     mouseY = pointer.y;
   }, this);
 
+  document.getElementById("startButton").innerHTML = "Reset level";
 }
 
 function moveAliensTo(x, y)
@@ -92,24 +160,34 @@ function moveAliensTo(x, y)
   }
 }
 
-function update ()
+function update()
 {
+  alienAlive = 0;
+  humanAlive = 0;
   if(moveToCursor)
   {
     moveAliensTo(mouseX, mouseY);
   }
   for(let i = 0; i < characters.length; i++)
   {
-    if(!(characters[i].stunned()) && characters[i].alive())
+    if(characters[i].alive())
     {
-      if(characters[i].moving())
+      if(characters[i].type == "alien")
+        alienAlive++;
+      if(characters[i].type == "human")
+        humanAlive++;
+
+      if(!(characters[i].stunned()))
       {
-        characters[i].sprite.setVelocityX(characters[i].getSpeedX() * characters[i].speed);
-        characters[i].sprite.setVelocityY(characters[i].getSpeedY() * characters[i].speed);
-      }
-      else {
-        characters[i].sprite.setVelocityX(0);
-        characters[i].sprite.setVelocityY(0);
+        if(characters[i].moving())
+        {
+          characters[i].sprite.setVelocityX(characters[i].getSpeedX() * characters[i].speed);
+          characters[i].sprite.setVelocityY(characters[i].getSpeedY() * characters[i].speed);
+        }
+        else {
+          characters[i].sprite.setVelocityX(0);
+          characters[i].sprite.setVelocityY(0);
+        }
       }
     }
 
@@ -122,30 +200,44 @@ function update ()
     }
 
     characters[i].simulate();
-
   }
 
+  document.getElementById("alienNbr").innerHTML = "Alien (" + alienAlive + ")";
+  document.getElementById("humanNbr").innerHTML = "Human (" + humanAlive + ") ";
+  if(humanAlive <= 0)
+    document.getElementById("startButton").innerHTML = "Next level";
 }
 
-function addCharacter(type = "human", life=1, detect=1, range=1, damage=1, attackDelay=1, callForHelp=false, canCharge=false, zombie=false)
+function addCharacter(type = "human", life=1, detect=1, range=1, damage=1, attackDelay=0.3, callForHelp=false, canCharge=false, zombie=false)
 {
-  if(type == "human")
-  {
-    characters.push(newHuman(scene, 0-Math.random()*300+WIDTH, Math.random()*HEIGHT+0));
-  }
-  if(type == "alien")
-  {
-    characters.push(newAlien(scene, Math.random()*300, Math.random()*HEIGHT+0,
+    let x = 0;
+    let y = 0;
+    let stayHome = false;
+    let tint = 0x44FF44;
+    if(type == "human")
+    {
+      x = 0-Math.random()*300+WIDTH;
+      y = Math.random()*HEIGHT+0;
+      tint = 0xFFFFFF;
+    }
+    if(type == "alien")
+    {
+      x = Math.random()*300;
+      y = Math.random()*HEIGHT+0;
+      tint = 0x44FF44;
+      stayHome = true;
+    }
+    characters.push(new gameObject(scene, x, y, type, tint,
     life,
     detect,
     range,
     damage,
-    attackDelay,
+    1000/attackDelay,
     callForHelp,
     canCharge,
-    zombie
-  ));
-  }
+    zombie,
+    stayHome
+    ));
 }
 
 function updateArmyMoney()

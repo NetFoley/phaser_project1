@@ -54,7 +54,7 @@ class gameObject {
     },
     this.sprite = game.physics.add.sprite(x, y, 'forest_sheet');
     this.getScale = function() {
-      return this.maxLife /200 + 0.25;
+      return Math.sqrt(this.maxLife) /15 + 0.20;
     },
     this.getDetectRange = function() {
       return this.detectRange * this.getScale();
@@ -130,10 +130,14 @@ class gameObject {
   }
   hit(damage, damager) {
     this.life -= damage;
-    this.stunTime = new Date().getTime() + 50;
+    if(this.target == undefined){
+      this.target = damager;
+    }
+    let force = damage / this.maxLife;
+    this.stunTime = new Date().getTime() + Math.sqrt(force*2500);
 
-    this.sprite.setVelocityX(200* damager.getSpeedX() * damager.damage / this.maxLife);
-    this.sprite.setVelocityY(200* damager.getSpeedY() * damager.damage / this.maxLife);
+    this.sprite.setVelocityX(200* damager.getSpeedX() * force);
+    this.sprite.setVelocityY(200* damager.getSpeedY() * force);
 
     if(this.life <= 0)
     {

@@ -1,4 +1,4 @@
-<!doctype html>
+  <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -52,6 +52,9 @@ const HEIGHT = 800;
 
     function startGame()
     {
+      if(humanAlive <= 0){
+        currentLevel++;
+      }
       if(game == undefined)
         game  = new Phaser.Game(config);
       else {
@@ -64,13 +67,16 @@ const HEIGHT = 800;
 
 </script>
 <div id="upgradeBox">
-  <button type="button" onclick="startGame()">Start game</button>
+  <button id="startButton" type="button" onclick="startGame()">Start game</button>
   <button type="button" onclick="newAlienType()">New alien</button>
   <button type="button" onclick="deleteAlienType()">Remove alien</button>
+  <label id="alienNbr"></label>
+  <label id="humanNbr"></label>
   <div id="repartitionBox">
     <p id="armyMoney">Money left :</p>
   </div>
 </div>
+</body>
 <script>
 let nb = 0;
 
@@ -87,9 +93,9 @@ let nb = 0;
     {
       let lifeInput = document.createElement("input");
       lifeInput.type = "range";
-      lifeInput.value = 10;
+      lifeInput.value = 50;
       lifeInput.step = 10;
-      lifeInput.min = 10;
+      lifeInput.min = 20;
       lifeInput.id = alienBox.id + "_lifeInput";
       lifeInput.setAttribute("oninput", "updateMoney(this.parentNode)");
       alienBox.appendChild(lifeInput);
@@ -100,7 +106,7 @@ let nb = 0;
     {
       let damageInput = document.createElement("input");
       damageInput.type = "range";
-      damageInput.value = 40;
+      damageInput.value = 20;
       damageInput.step = 10;
       damageInput.min = 10;
       damageInput.id = alienBox.id + "_damageInput";
@@ -141,7 +147,8 @@ let nb = 0;
       attackDelayInput.type = "range";
       attackDelayInput.value = 1.0;
       attackDelayInput.step = 0.1;
-      attackDelayInput.min = 0.3;
+      attackDelayInput.min = 0.2;
+      attackDelayInput.max = 1.0;
       attackDelayInput.id = alienBox.id + "_attackDelayInput";
       attackDelayInput.setAttribute("oninput", "updateMoney(this.parentNode)");
       alienBox.appendChild(attackDelayInput);
@@ -180,27 +187,27 @@ let nb = 0;
       alienBox.appendChild(zombieText);
       alienBox.innerHTML += "<br>";}
 
-  {
-    let repartitionInput = document.createElement("input");
-    repartitionInput.type = "range";
-    repartitionInput.value = 1;
-    repartitionInput.min = 0;
-    repartitionInput.id = alienBox.id + "_repartitionInput";
-    repartitionInput.setAttribute("oninput", "updateArmyMoney()");
-    document.getElementById("repartitionBox").appendChild(repartitionInput);
-    let repartitionText = document.createElement("label");
-    repartitionText.id = alienBox.id + "_repartitionText";
-    document.getElementById("repartitionBox").appendChild(repartitionText);
-    document.getElementById("repartitionBox").innerHTML += "<br>";}
+    {
+      let repartitionInput = document.createElement("input");
+      repartitionInput.type = "range";
+      repartitionInput.value = 1;
+      repartitionInput.min = 0;
+      repartitionInput.id = alienBox.id + "_repartitionInput";
+      repartitionInput.setAttribute("oninput", "updateArmyMoney()");
+      document.getElementById("repartitionBox").appendChild(repartitionInput);
+      let repartitionText = document.createElement("label");
+      repartitionText.id = alienBox.id + "_repartitionText";
+      document.getElementById("repartitionBox").appendChild(repartitionText);
+      document.getElementById("repartitionBox").innerHTML += "<br>";}
 
-    document.getElementById("upgradeBox").appendChild(alienBox);
+      document.getElementById("upgradeBox").appendChild(alienBox);
 
-    updateMoney(alienBox);
+      updateMoney(alienBox);
   }
 
   function deleteAlienType()
   {
-    if(document.getElementById("upgradeBox").children.length > 4)
+    if(document.getElementById("upgradeBox").lastChild.tagName == "DIV")
     {
       document.getElementById("upgradeBox").lastChild.remove();
       document.getElementById("repartitionBox").lastChild.remove();
@@ -211,7 +218,6 @@ let nb = 0;
 
 
 
-      newAlienType();
-      </script>
-</body>
+  newAlienType();
+  </script>
 </html>
