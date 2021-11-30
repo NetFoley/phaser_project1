@@ -4,7 +4,7 @@ class gameObject {
     this.maxLife= maxLife,
     this.life= maxLife,
     this.detectRange = detectRange,
-    this.range = range,
+    this.range = range+1,
     this.damage= damage,
     this.goalX = x,
     this.goalY = y,
@@ -60,7 +60,7 @@ class gameObject {
       return this.detectRange * this.getScale();
     }
     this.getRange = function(){
-      return this.range * this.getScale();
+      return (this.range+5) * this.getScale();
     },
     this.wanderRange = function(){
       return this.speed * 4;
@@ -134,7 +134,7 @@ class gameObject {
       this.target = damager;
     }
     let force = damage / this.maxLife;
-    this.stunTime = new Date().getTime() + Math.sqrt(force*2500);
+    this.stunTime = new Date().getTime() + Math.sqrt(force*5500);
 
     this.sprite.setVelocityX(200* damager.getSpeedX() * force);
     this.sprite.setVelocityY(200* damager.getSpeedY() * force);

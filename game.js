@@ -11,7 +11,7 @@ let currentLevel = 0;
 let entityCost = 15;
 let lifeCost = 5;
 let detectRangeCost = 1;
-let rangeCost = 10;
+let rangeCost = 50;
 let damageCost = 10;
 let attackDelayCost = 300;
 let callForHelpCost = 150;
@@ -22,7 +22,7 @@ let zombieCost = 2000;
     let levels = [{
       "globalMoney": 50000,
       "money": 2000,
-      "nbr": 15,
+      "nbr": 5,
       "life": 100,
       "detect": 200,
       "range": 10,
@@ -35,7 +35,7 @@ let zombieCost = 2000;
     {
       "globalMoney": 100000,
       "money": 3000,
-      "nbr": 35,
+      "nbr": 0,
       "life": 100,
       "detect": 50,
       "range": 10,
@@ -47,7 +47,7 @@ let zombieCost = 2000;
     {
       "globalMoney": 120000,
       "money": 5000,
-      "nbr": 50,
+      "nbr": 0,
       "life": 200,
       "detect": 200,
       "range": 20,
@@ -59,11 +59,23 @@ let zombieCost = 2000;
     {
       "globalMoney": 150000,
       "money": 5000,
-      "nbr": 1,
+      "nbr": 0,
       "life": 10000,
       "detect": 500,
       "range": 150,
       "damage": 100,
+      "attackDelay": 2,
+      "callForHelp": true,
+      "canCharge": true,
+      "zombie": false},
+    {
+      "globalMoney": 15000000,
+      "money": 10000,
+      "nbr": 1000,
+      "life": 100,
+      "detect": 500,
+      "range": 50,
+      "damage": 20,
       "attackDelay": 2,
       "callForHelp": true,
       "canCharge": true,
