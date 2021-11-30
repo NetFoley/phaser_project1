@@ -295,7 +295,7 @@ function updateMoney(box)
     document.getElementById(box.id + "_callForHelpText").innerHTML = "Call for help -" + callForHelpCost;
     document.getElementById(box.id + "_canChargeText").innerHTML = "Charge attack -" + canChargeCost;
     document.getElementById(box.id + "_zombieText").innerHTML = "Zombie bite -" + zombieCost;
-    document.getElementById(box.id + "_moneyAmount").innerHTML = "Cost :" + (money - remainingMoney) + " (" + box.id.split("_")[0]+")";
+    document.getElementById(box.id + "_moneyAmount").innerHTML = "Cost :" + (money - remainingMoney) + "/" + money + " (" + box.id.split("_")[0]+")";
     updateArmyMoney();
 }
 
