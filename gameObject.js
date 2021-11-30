@@ -1,10 +1,10 @@
 class gameObject {
-  constructor(game, x= 100, y = 100, type= "human", tint , maxLife = 100, detectRange = 50, range = 20, damage = 10, attackDelay = 2000, callForHelp = false, chargeAttack = false, zombieBite = false, stayNearHome = false) {
+  constructor(game, x= 100, y = 100, type= "human", tint= 0xFFFFFF , maxLife = 100, detectRange = 50, range = 20, damage = 10, attackDelay = 2000, callForHelp = false, chargeAttack = false, zombieBite = false, stayNearHome = false) {
     this.type = type;
     this.maxLife= maxLife,
     this.life= maxLife,
     this.detectRange = detectRange,
-    this.range = range+1,
+    this.range = parseInt(range)+10,
     this.damage= damage,
     this.goalX = x,
     this.goalY = y,
@@ -54,7 +54,7 @@ class gameObject {
     },
     this.sprite = game.physics.add.sprite(x, y, 'forest_sheet');
     this.getScale = function() {
-      return Math.sqrt(this.maxLife) /15 + 0.20;
+      return (Math.sqrt(this.maxLife) /25 + 0.40);
     },
     this.getDetectRange = function() {
       return this.detectRange * this.getScale();
@@ -63,14 +63,14 @@ class gameObject {
       return (this.range+5) * this.getScale();
     },
     this.wanderRange = function(){
-      return this.speed * 4;
+      return this.speed * 5 * this.getScale();
     }
-    this.speed = 7 + 30/ this.getScale(),
+    this.speed = 15 + 30/ this.getScale(),
     this.sprite.setScale(this.getScale());
   }
 
   callHelp() {
-    this.callForHelpTime = new Date().getTime() + 300;
+    this.callForHelpTime = new Date().getTime() + 500;
   }
   getTarget(target) {
     if(target != undefined)
@@ -133,8 +133,8 @@ class gameObject {
     if(this.target == undefined){
       this.target = damager;
     }
-    let force = damage / this.maxLife;
-    this.stunTime = new Date().getTime() + Math.sqrt(force*5500);
+    let force = Math.sqrt(damage / this.maxLife);
+    this.stunTime = new Date().getTime() + force*300;
 
     this.sprite.setVelocityX(200* damager.getSpeedX() * force);
     this.sprite.setVelocityY(200* damager.getSpeedY() * force);
@@ -158,14 +158,17 @@ class gameObject {
     if(this.alive()) {
     this.sprite.setVisible(true);
       if(this.stunned()){
-        this.sprite.setTintFill(0xFFFFFF);
+        this.sprite.setTintFill(0xFFFFFD);
       }
       else {
-        if(this.callForHelp && this.sprite.tintTopLeft != this.originalTint)
+        if(this.sprite.tintTopLeft != this.originalTint)
         {
-          this.callHelp();
+          if(this.callForHelp)
+          {
+            this.callHelp();
+          }
+          this.sprite.setTint(this.originalTint);
         }
-        this.sprite.setTint(this.originalTint);
       }
       if(this.target == undefined) {
           if(this.moving() == false && Math.random() < 0.01) {

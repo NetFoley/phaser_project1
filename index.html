@@ -43,7 +43,7 @@ const HEIGHT = 800;
     function preload ()
     {
 		this.load.image('sky', 'assets/sky.png');
-		this.load.image('star', 'assets/star.png');
+		this.load.image('star', 'assets/star2.png');
 		this.load.spritesheet('forest_sheet',
 			'assets/forest.png',
 			{ frameWidth: 32, frameHeight: 32 }
@@ -74,6 +74,9 @@ const HEIGHT = 800;
   <label id="humanNbr"></label>
   <div id="repartitionBox">
     <p id="armyMoney">Money left :</p>
+  </div>
+  <label id="humanNbr"></label>
+  <div id="aliensTab">
   </div>
 </div>
 </body>
@@ -193,8 +196,8 @@ let nb = 0;
     {
       let repartitionInput = document.createElement("input");
       repartitionInput.type = "range";
-      repartitionInput.value = 1;
       repartitionInput.min = 0;
+      repartitionInput.max = 0;
       repartitionInput.id = alienBox.id + "_repartitionInput";
       repartitionInput.setAttribute("oninput", "updateArmyMoney()");
       document.getElementById("repartitionBox").appendChild(repartitionInput);
@@ -203,15 +206,28 @@ let nb = 0;
       document.getElementById("repartitionBox").appendChild(repartitionText);
       document.getElementById("repartitionBox").innerHTML += "<br>";}
 
+      let button = document.createElement("button");
+      button.setAttribute("onclick", "openCity('"+alienBox.id+"',this)");
+      button.setAttribute("class", "tabLink");
+      button.innerHTML = alienBox.id;
+
+      document.getElementById("aliensTab").appendChild(button);
+      alienBox.setAttribute("class", "tabcontent");
       document.getElementById("upgradeBox").appendChild(alienBox);
 
       updateMoney(alienBox);
+      openCity(alienBox.id, button);
   }
 
   function deleteAlienType()
   {
     if(document.getElementById("upgradeBox").lastChild.tagName == "DIV")
     {
+      document.getElementById("aliensTab").lastChild.remove();
+        if(document.getElementById("aliensTab").lastChild .tagName == "BUTTON")
+      {
+          document.getElementById("aliensTab").lastChild.click();
+      }
       document.getElementById("upgradeBox").lastChild.remove();
       document.getElementById("repartitionBox").lastChild.remove();
       document.getElementById("repartitionBox").lastChild.remove();
@@ -219,8 +235,24 @@ let nb = 0;
     }
   }
 
-
-
   newAlienType();
+
+  function openCity(tab, button) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    var i, tabcontent, tablinks;
+    tablinks = document.getElementsByClassName("tabLink");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].style.fontSize = "0.7em";
+      tablinks[i].style.borderStyle = "inset";
+    }
+    button.style.fontSize = "0.8em";
+    button.style.borderStyle = "outset";
+    document.getElementById(tab).style.display = "block";
+
+  }
   </script>
 </html>

@@ -12,54 +12,53 @@ let entityCost = 15;
 let lifeCost = 5;
 let detectRangeCost = 1;
 let rangeCost = 50;
-let damageCost = 10;
-let attackDelayCost = 300;
+let damageCost = 12;
+let attackDelayCost = 600;
 let callForHelpCost = 150;
 let canChargeCost = 750;
 let zombieCost = 2000;
 
-
     let levels = [{
-      "globalMoney": 50000,
-      "money": 2000,
+      "globalMoney": 5000,
+      "money": 1000,
       "nbr": 5,
       "life": 100,
-      "detect": 200,
-      "range": 10,
+      "detect": 400,
+      "range": 0,
       "damage": 5,
       "attackDelay": 0.2,
-      "callForHelp": false,
+      "callForHelp": true,
       "canCharge": false,
       "zombie": false
     },
     {
-      "globalMoney": 100000,
-      "money": 3000,
-      "nbr": 0,
-      "life": 100,
-      "detect": 50,
-      "range": 10,
+      "globalMoney": 10000,
+      "money": 2000,
+      "nbr": 30,
+      "life": 180,
+      "detect": 75,
+      "range": 0,
       "damage": 10,
-      "attackDelay": 0.3,
+      "attackDelay": 0.5,
       "callForHelp": false,
       "canCharge": false,
       "zombie": false},
     {
-      "globalMoney": 120000,
-      "money": 5000,
-      "nbr": 0,
-      "life": 200,
+      "globalMoney": 80000,
+      "money": 3000,
+      "nbr": 50,
+      "life": 100,
       "detect": 200,
-      "range": 20,
-      "damage": 5,
-      "attackDelay": 0.4,
+      "range": 0,
+      "damage": 10,
+      "attackDelay": 0.2,
       "callForHelp": true,
       "canCharge": false,
       "zombie": false},
     {
       "globalMoney": 150000,
       "money": 5000,
-      "nbr": 0,
+      "nbr": 1,
       "life": 10000,
       "detect": 500,
       "range": 150,
@@ -69,7 +68,7 @@ let zombieCost = 2000;
       "canCharge": true,
       "zombie": false},
     {
-      "globalMoney": 15000000,
+      "globalMoney": 350000,
       "money": 10000,
       "nbr": 1000,
       "life": 100,
@@ -83,6 +82,7 @@ let zombieCost = 2000;
   ];
 let money = levels[currentLevel].money;
 let globalMoney = levels[currentLevel].globalMoney;
+let flag;
 function create()
 {
     scene = this;
@@ -110,6 +110,7 @@ function create()
 
 
   this.add.image(500, 400, 'sky');
+  flag = this.add.image(500, 400, 'star');
 
   for(let i = 0; i < levels[currentLevel].nbr; i++)
     addCharacter("human",
@@ -146,6 +147,7 @@ function create()
       }
     }
 
+  flag.setVisible(false);
   this.input.on('pointerdown', function(pointer){
     moveToCursor = true;
   }, this);
@@ -178,6 +180,9 @@ function update()
   humanAlive = 0;
   if(moveToCursor)
   {
+    flag.setVisible(true);
+    flag.x = mouseX;
+    flag.y = mouseY;
     moveAliensTo(mouseX, mouseY);
   }
   for(let i = 0; i < characters.length; i++)
@@ -269,7 +274,9 @@ function updateArmyMoney()
           document.getElementById(box.children[i].id.split("_")[0] + "_repartitionText").innerHTML = box.children[i].value + " (" + box.children[i].id.split("_")[0] + ")";
         }
     }
-
+    if(globalMoney - totalCost < 0){
+      console.log(box);
+    }
     document.getElementById("armyMoney").innerHTML = "Money left :" + (globalMoney - totalCost);
 
 }
