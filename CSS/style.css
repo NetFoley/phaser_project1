@@ -1,0 +1,12 @@
+ body
+{
+	font-family: 'myndraine_regular', Arial, serif;
+}
+
+#upgradeBox{
+    margin: 5px;
+    padding: 0;
+    position: absolute;
+    left: 1000px;
+    font-size: 1em;
+}

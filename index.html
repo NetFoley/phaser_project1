@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Alien attack</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <script src="game.js"></script>
+    <script src="character.js"></script>
+    <script src="gameObject.js"></script>
+  	<link type="text/css" rel="stylesheet" href="CSS/style.css"/>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+let characters = [];
+const WIDTH = 1000;
+const HEIGHT = 800;
+    var config = {
+		type: Phaser.AUTO,
+		width: WIDTH,
+		height: HEIGHT,
+		antialias: false,
+		physics: {
+			default: 'arcade',
+			arcade: {
+				debug: false
+			}
+		},
+		scene: {
+			preload: preload,
+			create: create,
+			update: update
+		}
+	};
+
+  var game = undefined;
+
+    function preload ()
+    {
+		this.load.image('sky', 'assets/sky.png');
+		this.load.image('star', 'assets/star.png');
+		this.load.spritesheet('forest_sheet',
+			'assets/forest.png',
+			{ frameWidth: 32, frameHeight: 32 }
+		);
+    }
+
+    function startGame()
+    {
+      if(game == undefined)
+        game  = new Phaser.Game(config);
+      else {
+          game.destroy(true);
+          game  = new Phaser.Game(config);
+
+          characters = [];
+      }
+    }
+
+</script>
+<div id="upgradeBox">
+  <button type="button" onclick="startGame()">Start game</button>
+  <button type="button" onclick="newAlienType()">New alien</button>
+  <button type="button" onclick="deleteAlienType()">Remove alien</button>
+  <div id="repartitionBox">
+    <p id="armyMoney">Money left :</p>
+  </div>
+</div>
+<script>
+let nb = 0;
+
+  function newAlienType()
+  {
+    nb++;
+    let alienBox = document.createElement("div");
+    let money = document.createElement("p");
+    money.innerHTML = "Money :";
+    alienBox.id = "alien" + nb;
+    money.id = alienBox.id + "_moneyAmount";
+    alienBox.appendChild(money);
+
+    {
+      let lifeInput = document.createElement("input");
+      lifeInput.type = "range";
+      lifeInput.value = 10;
+      lifeInput.step = 10;
+      lifeInput.min = 10;
+      lifeInput.id = alienBox.id + "_lifeInput";
+      lifeInput.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(lifeInput);
+      let lifeText = document.createElement("label");
+      lifeText.id = alienBox.id + "_lifeText";
+      alienBox.appendChild(lifeText);
+      alienBox.innerHTML += "<br>";}
+    {
+      let damageInput = document.createElement("input");
+      damageInput.type = "range";
+      damageInput.value = 40;
+      damageInput.step = 10;
+      damageInput.min = 10;
+      damageInput.id = alienBox.id + "_damageInput";
+      damageInput.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(damageInput);
+      let damageText = document.createElement("label");
+      damageText.id = alienBox.id + "_damageText";
+      alienBox.appendChild(damageText);
+      alienBox.innerHTML += "<br>";}
+    {
+      let detectRangeInput = document.createElement("input");
+      detectRangeInput.type = "range";
+      detectRangeInput.value = 200;
+      detectRangeInput.step = 10;
+      detectRangeInput.min = 100;
+      detectRangeInput.id = alienBox.id + "_detectRangeInput";
+      detectRangeInput.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(detectRangeInput);
+      let detectRangeText = document.createElement("label");
+      detectRangeText.id = alienBox.id + "_detectRangeText";
+      alienBox.appendChild(detectRangeText);
+      alienBox.innerHTML += "<br>";}
+    {
+      let rangeInput = document.createElement("input");
+      rangeInput.type = "range";
+      rangeInput.value = 20;
+      rangeInput.step = 10;
+      rangeInput.min = 10;
+      rangeInput.id = alienBox.id + "_rangeInput";
+      rangeInput.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(rangeInput);
+      let rangeText = document.createElement("label");
+      rangeText.id = alienBox.id + "_rangeText";
+      alienBox.appendChild(rangeText);
+      alienBox.innerHTML += "<br>";}
+    {
+      let attackDelayInput = document.createElement("input");
+      attackDelayInput.type = "range";
+      attackDelayInput.value = 1.0;
+      attackDelayInput.step = 0.1;
+      attackDelayInput.min = 0.3;
+      attackDelayInput.id = alienBox.id + "_attackDelayInput";
+      attackDelayInput.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(attackDelayInput);
+      let attackDelayText = document.createElement("label");
+      attackDelayText.id = alienBox.id + "_attackDelayText";
+      alienBox.appendChild(attackDelayText);
+      alienBox.innerHTML += "<br>";}
+    {
+      let callForHelpCheck = document.createElement("input");
+      callForHelpCheck.type = "checkbox";
+      callForHelpCheck.id = alienBox.id + "_callForHelpCheck";
+      callForHelpCheck.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(callForHelpCheck);
+      let callForHelpText = document.createElement("label");
+      callForHelpText.id = alienBox.id + "_callForHelpText";
+      alienBox.appendChild(callForHelpText);
+      alienBox.innerHTML += "<br>";}
+    {
+      let canChargeCheck = document.createElement("input");
+      canChargeCheck.type = "checkbox";
+      canChargeCheck.id = alienBox.id + "_canChargeCheck";
+      canChargeCheck.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(canChargeCheck);
+      let canChargeText = document.createElement("label");
+      canChargeText.id = alienBox.id + "_canChargeText";
+      alienBox.appendChild(canChargeText);
+      alienBox.innerHTML += "<br>";}
+    {
+      let zombieCheck = document.createElement("input");
+      zombieCheck.type = "checkbox";
+      zombieCheck.id = alienBox.id + "_zombieCheck";
+      zombieCheck.setAttribute("oninput", "updateMoney(this.parentNode)");
+      alienBox.appendChild(zombieCheck);
+      let zombieText = document.createElement("label");
+      zombieText.id = alienBox.id + "_zombieText";
+      alienBox.appendChild(zombieText);
+      alienBox.innerHTML += "<br>";}
+
+  {
+    let repartitionInput = document.createElement("input");
+    repartitionInput.type = "range";
+    repartitionInput.value = 1;
+    repartitionInput.min = 0;
+    repartitionInput.id = alienBox.id + "_repartitionInput";
+    repartitionInput.setAttribute("oninput", "updateArmyMoney()");
+    document.getElementById("repartitionBox").appendChild(repartitionInput);
+    let repartitionText = document.createElement("label");
+    repartitionText.id = alienBox.id + "_repartitionText";
+    document.getElementById("repartitionBox").appendChild(repartitionText);
+    document.getElementById("repartitionBox").innerHTML += "<br>";}
+
+    document.getElementById("upgradeBox").appendChild(alienBox);
+
+    updateMoney(alienBox);
+  }
+
+  function deleteAlienType()
+  {
+    if(document.getElementById("upgradeBox").children.length > 4)
+    {
+      document.getElementById("upgradeBox").lastChild.remove();
+      document.getElementById("repartitionBox").lastChild.remove();
+      document.getElementById("repartitionBox").lastChild.remove();
+      document.getElementById("repartitionBox").lastChild.remove();
+    }
+  }
+
+
+
+      newAlienType();
+      </script>
+</body>
+</html>
