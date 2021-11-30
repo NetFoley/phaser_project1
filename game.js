@@ -22,7 +22,7 @@ let zombieCost = 2000;
     let levels = [{
       "globalMoney": 50000,
       "money": 2000,
-      "nbr": 0,
+      "nbr": 15,
       "life": 100,
       "detect": 200,
       "range": 10,
@@ -35,7 +35,7 @@ let zombieCost = 2000;
     {
       "globalMoney": 100000,
       "money": 3000,
-      "nbr": 0,
+      "nbr": 35,
       "life": 100,
       "detect": 50,
       "range": 10,
