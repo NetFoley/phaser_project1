@@ -1,6 +1,7 @@
 class gameObject {
-  constructor(game, x= 100, y = 100, type= "human", tint= 0xFFFFFF , maxLife = 100, detectRange = 50, range = 20, damage = 10, attackDelay = 2000, callForHelp = false, chargeAttack = false, zombieBite = false, stayNearHome = false) {
-    this.type = type;
+  constructor(game, x= 100, y = 100, type= "human", tint= 0xFFFFFF , maxLife = 100, detectRange = 50, range = 20, damage = 10, attackDelay = 2000, callForHelp = false, chargeAttack = false, explosion = false, zombieBite = false, stayNearHome = false) {
+    this.game = game,
+    this.type = type,
     this.maxLife= maxLife,
     this.life= maxLife,
     this.detectRange = detectRange,
@@ -10,6 +11,7 @@ class gameObject {
     this.goalY = y,
     this.homeX = x,
     this.homeY = y,
+    this.explosion = explosion,
     this.originalTint = tint,
     this.callForHelp = callForHelp,
     this.chargeAttack = chargeAttack,
@@ -59,6 +61,9 @@ class gameObject {
     this.getDetectRange = function() {
       return this.detectRange * this.getScale();
     }
+    this.getType = function() {
+      return String(this.type).slice(0,5);
+    }
     this.getRange = function(){
       return (this.range+5) * this.getScale();
     },
@@ -71,6 +76,14 @@ class gameObject {
 
   callHelp() {
     this.callForHelpTime = new Date().getTime() + 500;
+  }
+
+  die() {
+    this.sprite.setVelocityX(0);
+    this.sprite.setVelocityY(0);
+    this.sprite.setVisible(false);
+    if(this.explosion)
+      explode(this, getExplosionDamage(this.life, this.damage));
   }
   getTarget(target) {
     if(target != undefined)
@@ -114,8 +127,6 @@ class gameObject {
       else {
         this.target.hit(this.damage, this);
       }
-      if(this.zombieBite)
-        this.zombiefie(this.target);
 
         this.lastHitTime = new Date().getTime();
     }
@@ -130,19 +141,21 @@ class gameObject {
   }
   hit(damage, damager) {
     this.life -= damage;
-    if(this.target == undefined){
+    if(this.target == undefined && damager.alive()){
       this.target = damager;
     }
+    let dir = Math.atan2(this.sprite.y - damager.sprite.y, this.sprite.x - damager.sprite.x);
     let force = Math.sqrt(damage / this.maxLife);
-    this.stunTime = new Date().getTime() + force*300;
+    this.stunTime = new Date().getTime() + force*200;
 
-    this.sprite.setVelocityX(200* damager.getSpeedX() * force);
-    this.sprite.setVelocityY(200* damager.getSpeedY() * force);
+    this.sprite.setVelocityX(200* Math.cos(dir) * force*1.5);
+    this.sprite.setVelocityY(200* Math.sin(dir) * force*1.5);
 
+    if(damager.zombieBite && String(damager.type).slice(0,5) != String(this.type).slice(0,5))
+      damager.zombiefie(this);
     if(this.life <= 0)
     {
       console.log("dead " + this.type);
-      this.moveTo(this.sprite.x , this.sprite.y);
       this.sprite.setTintFill(0x000000);
     }
   }
@@ -192,11 +205,8 @@ class gameObject {
       }
     }
     else {
-      if(!this.stunned())
-      {
-        this.sprite.setVelocityX(0);
-        this.sprite.setVelocityY(0);
-        this.sprite.setVisible(false);
+      if(!this.stunned() && this.sprite.visible == true){
+        this.die();
       }
     }
   }

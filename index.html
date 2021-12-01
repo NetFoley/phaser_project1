@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Alien attack</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <script src="levels.js"></script>
     <script src="game.js"></script>
     <script src="character.js"></script>
     <script src="gameObject.js"></script>
@@ -182,6 +183,18 @@ let nb = 0;
       canChargeText.id = alienBox.id + "_canChargeText";
       alienBox.appendChild(canChargeText);
       alienBox.innerHTML += "<br>";}
+
+      {
+        let explosionCheck = document.createElement("input");
+        explosionCheck.type = "checkbox";
+        explosionCheck.id = alienBox.id + "_explosionCheck";
+        explosionCheck.setAttribute("oninput", "updateMoney(this.parentNode)");
+        alienBox.appendChild(explosionCheck);
+        let explosionText = document.createElement("label");
+        explosionText.id = alienBox.id + "_explosionText";
+        alienBox.appendChild(explosionText);
+        alienBox.innerHTML += "<br>";}
+
     {
       let zombieCheck = document.createElement("input");
       zombieCheck.type = "checkbox";
@@ -192,6 +205,7 @@ let nb = 0;
       zombieText.id = alienBox.id + "_zombieText";
       alienBox.appendChild(zombieText);
       alienBox.innerHTML += "<br>";}
+
 
     {
       let repartitionInput = document.createElement("input");
@@ -216,6 +230,7 @@ let nb = 0;
       document.getElementById("upgradeBox").appendChild(alienBox);
 
       updateMoney(alienBox);
+      updateArmyMoney(alienBox);
       openCity(alienBox.id, button);
   }
 

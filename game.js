@@ -13,75 +13,14 @@ let alienFocus = 0;
 let entityCost = 15;
 let lifeCost = 5;
 let detectRangeCost = 1;
-let rangeCost = 50;
+let rangeCost = 25;
 let damageCost = 12;
 let attackDelayCost = 600;
-let callForHelpCost = 150;
-let canChargeCost = 750;
-let zombieCost = 2000;
+let callForHelpCost = 250;
+let canChargeCost = 900;
+let explosionCost = 2000;
+let zombieCost = 3000;
 
-    let levels = [{
-      "globalMoney": 5000,
-      "money": 1000,
-      "nbr": 5,
-      "life": 100,
-      "detect": 400,
-      "range": 0,
-      "damage": 5,
-      "attackDelay": 0.2,
-      "callForHelp": true,
-      "canCharge": false,
-      "zombie": false
-    },
-    {
-      "globalMoney": 10000,
-      "money": 2000,
-      "nbr": 30,
-      "life": 180,
-      "detect": 75,
-      "range": 0,
-      "damage": 10,
-      "attackDelay": 0.5,
-      "callForHelp": false,
-      "canCharge": false,
-      "zombie": false},
-    {
-      "globalMoney": 80000,
-      "money": 3000,
-      "nbr": 50,
-      "life": 100,
-      "detect": 200,
-      "range": 0,
-      "damage": 10,
-      "attackDelay": 0.2,
-      "callForHelp": true,
-      "canCharge": false,
-      "zombie": false},
-    {
-      "globalMoney": 150000,
-      "money": 5000,
-      "nbr": 1,
-      "life": 10000,
-      "detect": 500,
-      "range": 150,
-      "damage": 100,
-      "attackDelay": 2,
-      "callForHelp": true,
-      "canCharge": true,
-      "zombie": false},
-    {
-      "globalMoney": 350000,
-      "money": 10000,
-      "nbr": 1000,
-      "life": 100,
-      "detect": 500,
-      "range": 50,
-      "damage": 20,
-      "attackDelay": 2,
-      "callForHelp": true,
-      "canCharge": true,
-      "zombie": false}
-  ];
 let money = levels[currentLevel].money;
 let globalMoney = levels[currentLevel].globalMoney;
 let flag;
@@ -135,6 +74,7 @@ function create()
     levels[currentLevel].attackDelay,
     levels[currentLevel].callForHelp,
     levels[currentLevel].canCharge,
+    levels[currentLevel].explosion,
     levels[currentLevel].zombie
   );
 
@@ -155,6 +95,7 @@ function create()
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_attackDelayInput").value,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_callForHelpCheck").checked,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_canChargeCheck").checked,
+          document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_explosionCheck").checked,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_zombieCheck").checked
         );
         }
@@ -295,7 +236,7 @@ function selectAlien(nbr)
 
 }
 
-function addCharacter(type = "human", life=1, detect=1, range=1, damage=1, attackDelay=0.3, callForHelp=false, canCharge=false, zombie=false)
+function addCharacter(type = "human", life=1, detect=1, range=1, damage=1, attackDelay=0.3, callForHelp=false, canCharge=false, explosion = false, zombie=false)
 {
     let x = 0;
     let y = 0;
@@ -322,6 +263,7 @@ function addCharacter(type = "human", life=1, detect=1, range=1, damage=1, attac
     1000/attackDelay,
     callForHelp,
     canCharge,
+    explosion,
     zombie,
     stayHome
     ));
@@ -356,7 +298,7 @@ function updateMoney(box)
     let remainingMoney = getRemainingMoney(box);
     document.getElementById(box.id + "_damageInput").max = (remainingMoney+document.getElementById(box.id + "_damageInput").value*damageCost) / damageCost;
     document.getElementById(box.id + "_lifeInput").max = (remainingMoney+document.getElementById(box.id + "_lifeInput").value*lifeCost) / lifeCost;
-    document.getElementById(box.id + "_detectRangeInput").max = (remainingMoney+document.getElementById(box.id + "_detectRangeInput").value*detectRangeCost) / detectRangeCost;
+    document.getElementById(box.id + "_detectRangeInput").max = Math.min((remainingMoney+document.getElementById(box.id + "_detectRangeInput").value*detectRangeCost) / detectRangeCost, 1000);
     document.getElementById(box.id + "_rangeInput").max = (remainingMoney+document.getElementById(box.id + "_rangeInput").value*rangeCost) / rangeCost;
     document.getElementById(box.id + "_attackDelayInput").max = (remainingMoney+document.getElementById(box.id + "_attackDelayInput").value*attackDelayCost) / attackDelayCost;
     if(remainingMoney < callForHelpCost && document.getElementById(box.id + "_callForHelpCheck").checked == false)
@@ -374,6 +316,11 @@ function updateMoney(box)
       else {
         document.getElementById(box.id + "_zombieCheck").disabled = false;
       }
+    if(remainingMoney < explosionCost && document.getElementById(box.id + "_explosionCheck").checked == false)
+      document.getElementById(box.id + "_explosionCheck").disabled = true;
+      else {
+        document.getElementById(box.id + "_explosionCheck").disabled = false;
+      }
 
     //Update display
     document.getElementById(box.id + "_lifeText").innerHTML = "Life :" + document.getElementById(box.id + "_lifeInput").value;
@@ -384,8 +331,27 @@ function updateMoney(box)
     document.getElementById(box.id + "_callForHelpText").innerHTML = "Call for help -" + callForHelpCost;
     document.getElementById(box.id + "_canChargeText").innerHTML = "Charge attack -" + canChargeCost;
     document.getElementById(box.id + "_zombieText").innerHTML = "Zombie bite -" + zombieCost;
+    document.getElementById(box.id + "_explosionText").innerHTML =
+    "Explosion -" + explosionCost + "("+ getExplosionDamage(document.getElementById(box.id + "_lifeInput").value, document.getElementById(box.id + "_damageInput").value) + " damage)";
     document.getElementById(box.id + "_moneyAmount").innerHTML = "Cost :" + (money - remainingMoney) + "/" + money + " (" + box.id.split("_")[0]+")";
     updateArmyMoney();
+}
+
+function explode(object, damage){
+  for(let i = 0; i < characters.length; i++){
+    let dmgToChar = damage/(Math.max(1,characters[i].getDistance(object)*Math.sqrt(characters[i].getDistance(object)) - object.getRange()*10));
+    if(dmgToChar > 5 && characters[i].alive() && object != characters[i]){
+      if(characters[i].getType() == object.getType()){
+        dmgToChar*=0.5;
+      }
+      characters[i].hit(dmgToChar,object);
+    }
+  }
+}
+
+function getExplosionDamage(life, damage)
+{
+  return parseInt(life)*0.3  + parseInt(damage)*2.5;
 }
 
 function getRemainingMoney(box)
