@@ -75,7 +75,7 @@ class gameObject {
   getTarget(target) {
     if(target != undefined)
     {
-      if(target.type != this.type)
+      if(String(target.type).slice(0,5) != String(this.type).slice(0,5))
       {
         if(target.alive() && this.getDistance(target) / target.getScale() < this.getDetectRange() && (this.target == undefined || this.target.alive() == false || this.getDistance(target) < this.getDistance(this.target)))
         {
@@ -96,7 +96,7 @@ class gameObject {
     {
       console.log("New zombie");
       target.life = target.maxLife / 2;
-      target.type = this.type;
+      target.type = this.type ;
       target.originalTint = this.originalTint;
       target.target = undefined;
       this.target = undefined;

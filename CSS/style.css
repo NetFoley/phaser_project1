@@ -11,6 +11,10 @@
     font-size: 1em;
 }
 
+div.tabcontent{
+  background-color: rgba(230, 230, 250, 0.5);
+}
+
 .tablink {
   background-color: #555;
   color: white;

@@ -7,6 +7,8 @@ let mouseY = 0;
 let alienAlive = 0;
 let humanAlive = 1;
 let currentLevel = 0;
+let keyboard;
+let alienFocus = 0;
 
 let entityCost = 15;
 let lifeCost = 5;
@@ -88,6 +90,18 @@ function create()
     scene = this;
     //  Input Events
     cursors = this.input.mouse;
+    keyboard = this.input.keyboard.addKeys({
+    one:  Phaser.Input.Keyboard.KeyCodes.ONE,
+    two:  Phaser.Input.Keyboard.KeyCodes.TWO,
+    three:  Phaser.Input.Keyboard.KeyCodes.THREE,
+    four:  Phaser.Input.Keyboard.KeyCodes.FOUR,
+    five:  Phaser.Input.Keyboard.KeyCodes.FIVE,
+    six:  Phaser.Input.Keyboard.KeyCodes.SIX,
+    seven:  Phaser.Input.Keyboard.KeyCodes.SEVEN,
+    height:  Phaser.Input.Keyboard.KeyCodes.HEIGHT,
+    nine:  Phaser.Input.Keyboard.KeyCodes.NINE,
+    zero:  Phaser.Input.Keyboard.KeyCodes.ZERO
+});
     game.anims.create({
       key: 'left',
       frames: game.anims.generateFrameNumbers('forest_sheet', { start: 0, end: 7 }),
@@ -133,7 +147,7 @@ function create()
       if(repartitionBox.children[i].tagName == "INPUT"){
         for(let j = 0; j < repartitionBox.children[i].value; j++)
         {
-          addCharacter("alien",
+          addCharacter(repartitionBox.children[i].id.split("_"),
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_lifeInput").value,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_detectRangeInput").value,
           document.getElementById(repartitionBox.children[i].id.split("_")[0]+"_rangeInput").value,
@@ -154,6 +168,9 @@ function create()
   this.input.on('pointerup', function(pointer){
     moveToCursor = false;
   }, this);
+  this.input.on('pointerup', function(pointer){
+    moveToCursor = false;
+  }, this);
   this.input.on('pointermove', function(pointer){
     mouseX = pointer.x;
     mouseY = pointer.y;
@@ -162,36 +179,63 @@ function create()
   document.getElementById("startButton").innerHTML = "Reset level";
 }
 
-function moveAliensTo(x, y)
-{
-  for(var i = 0; i < characters.length; i++)
-  {
-    if(characters[i].type == "alien")
-    {
+function moveAliensTo(x, y, nbr = "0"){
+  for(var i = 0; i < characters.length; i++){
+    if(String(characters[i].type).slice(0,5) == "alien" && nbr == "0" || String(characters[i].type).slice(5,6) == nbr){
       characters[i].homeX = x;
       characters[i].homeY = y;
     }
   }
 }
 
-function update()
-{
+function update(){
   alienAlive = 0;
   humanAlive = 0;
+  if(keyboard.one.isDown){
+    selectAlien("1");
+  }
+  if(keyboard.two.isDown){
+    selectAlien("2");
+  }
+  if(keyboard.three.isDown){
+    selectAlien("3");
+  }
+  if(keyboard.four.isDown){
+    selectAlien("4");
+  }
+  if(keyboard.five.isDown){
+    selectAlien("5");
+  }
+  if(keyboard.six.isDown){
+    selectAlien("6");
+  }
+  if(keyboard.seven.isDown){
+    selectAlien("7");
+  }
+  if(keyboard.height.isDown){
+    selectAlien("8");
+  }
+  if(keyboard.nine.isDown){
+    selectAlien("9");
+  }
+  if(keyboard.zero.isDown){
+    selectAlien("0");
+  }
+
   if(moveToCursor)
   {
     flag.setVisible(true);
     flag.x = mouseX;
     flag.y = mouseY;
-    moveAliensTo(mouseX, mouseY);
+    moveAliensTo(mouseX, mouseY, alienFocus);
   }
   for(let i = 0; i < characters.length; i++)
   {
     if(characters[i].alive())
     {
-      if(characters[i].type == "alien")
+      if(String(characters[i].type).slice(0,5) == "alien")
         alienAlive++;
-      if(characters[i].type == "human")
+      if(String(characters[i].type).slice(0,5) == "human")
         humanAlive++;
 
       if(!(characters[i].stunned()))
@@ -225,19 +269,45 @@ function update()
     document.getElementById("startButton").innerHTML = "Next level";
 }
 
+function selectAlien(nbr)
+{
+    alienFocus = nbr;
+    let boxes = document.getElementsByClassName("tabcontent");
+
+    for(let i = 0; i < boxes.length; i++){
+      if(document.getElementById(boxes[i].id+"_repartitionText") != null)
+      {
+        document.getElementById(boxes[i].id+"_repartitionText").style.fontWeight = "normal";
+      }
+    }
+
+    if(nbr == "0"){
+      for(let i = 0; i < boxes.length; i++){
+          if(document.getElementById(boxes[i].id+"_repartitionText") != null){
+              document.getElementById(boxes[i].id+"_repartitionText").style.fontWeight = "bold";
+          }
+      }
+    }
+    else {
+      if(document.getElementById("alien"+nbr+"_repartitionText"))
+        document.getElementById("alien"+nbr+"_repartitionText").style.fontWeight = "bold";
+    }
+
+}
+
 function addCharacter(type = "human", life=1, detect=1, range=1, damage=1, attackDelay=0.3, callForHelp=false, canCharge=false, zombie=false)
 {
     let x = 0;
     let y = 0;
     let stayHome = false;
     let tint = 0x44FF44;
-    if(type == "human")
+    if(String(type).slice(0, 5) == "human")
     {
       x = 0-Math.random()*300+WIDTH;
       y = Math.random()*HEIGHT+0;
       tint = 0xFFFFFF;
     }
-    if(type == "alien")
+    if(String(type).slice(0,5) == "alien")
     {
       x = Math.random()*300;
       y = Math.random()*HEIGHT+0;
