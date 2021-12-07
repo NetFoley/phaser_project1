@@ -7,8 +7,14 @@
     margin: 5px;
     padding: 0;
     position: absolute;
-    left: 1000px;
+    left : 1200px;
     font-size: 1em;
+}
+
+#welcomeText{
+      margin: 35px;
+      position: absolute;
+      font-size: 1.2em;
 }
 
 div.tabcontent{

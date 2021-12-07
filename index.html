@@ -16,11 +16,30 @@
     </style>
 </head>
 <body>
-
+<div id="welcomeText">
+  <h1>Comment jouer à Alien attack :</h1>
+  <h3><b>1/</b> Designer votre alien</h3>
+  <p>- Vie / taille (<b>Life</b>)</p>
+  <p>- Dégats (<b>Damage</b>)</p>
+  <p>- Distance de détection (<b>Vision range</b>)</p>
+  <p>- Distance d'attaque (<b>Attack range</b>)</p>
+  <p>- Vitesse d'attaque /s (<b>Attack speed</b>)</p>
+  <p>- Appel à l'aide (<b>Call for help</b>)</p>
+  <p>- Attaque de charge (Double dégats) (<b>Charge attack</b>)</p>
+  <p>- Kaboom (<b>Explosion</b>)</p>
+  <p>- Morsure zombie (<b>Zombie bite</b>)</p>
+  <br>
+  <p>Cliquer sur <i><b>New alien</b></i> pour rajouter un nouveau type d'alien</p>
+  <br><h3>2/ Choisissez combien d'alien de chaque type seront déployés par rapport à votre budjet total. <br>(tip : plus l'alien est cher moins vous pourrez en mettre)</h3>
+  <br><h3>3/ Cliquer sur <i><b>Start game</b></i> une fois prêt</h3>
+  <p>Contrôles:</p>
+  <p>Clique gauche pour donner un point de ralliement aux alien</p>
+  <p>Utiliser les touches 1 à 0 du clavier pour donner des ordres à un type d'alien à la fois</p>
+</div>
 <script type="text/javascript">
 let characters = [];
-const WIDTH = 1000;
-const HEIGHT = 800;
+const WIDTH = 1100;
+  const HEIGHT = 800;
     var config = {
 		type: Phaser.AUTO,
 		width: WIDTH,
@@ -53,6 +72,7 @@ const HEIGHT = 800;
 
     function startGame()
     {
+      document.getElementById("welcomeText").style.display = "none";
       if(humanAlive <= 0){
         currentLevel++;
       }

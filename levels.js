@@ -1,6 +1,6 @@
 let levels = [{
-      "globalMoney": 8000,
-      "money": 1250,
+      "globalMoney": 10000,
+      "money": 3000,
       "nbr": 5,
       "life": 100,
       "detect": 200,
@@ -13,8 +13,8 @@ let levels = [{
       "zombie": false
     },
     {
-      "globalMoney": 16000,
-      "money": 2000,
+      "globalMoney": 26000,
+      "money": 3500,
       "nbr": 15,
       "life": 150,
       "detect": 100,
@@ -26,8 +26,8 @@ let levels = [{
       "explosion": false,
       "zombie": false},
     {
-      "globalMoney": 15000,
-      "money": 2500,
+      "globalMoney": 35000,
+      "money": 4000,
       "nbr": 30,
       "life": 200,
       "detect": 75,
@@ -39,8 +39,8 @@ let levels = [{
       "explosion": false,
       "zombie": false},
     {
-      "globalMoney": 30000,
-      "money": 3000,
+      "globalMoney": 50000,
+      "money": 5000,
       "nbr": 50,
       "life": 100,
       "detect": 200,
@@ -52,8 +52,8 @@ let levels = [{
       "explosion": false,
       "zombie": false},
     {
-      "globalMoney": 150000,
-      "money": 4000,
+      "globalMoney": 250000,
+      "money": 6000,
       "nbr": 1,
       "life": 10000,
       "detect": 500,
@@ -66,7 +66,7 @@ let levels = [{
       "zombie": false},
     {
       "globalMoney": 350000,
-      "money": 5000,
+      "money": 70000,
       "nbr": 500,
       "life": 100,
       "detect": 200,

@@ -62,8 +62,8 @@ function create()
     });
 
 
-  this.add.image(500, 400, 'sky');
-  flag = this.add.image(500, 400, 'star');
+  this.add.image(WIDTH/2, HEIGHT/2, 'sky');
+  flag = this.add.image(WIDTH/2, HEIGHT/2, 'star');
 
   for(let i = 0; i < levels[currentLevel].nbr; i++)
     addCharacter("human",
@@ -289,7 +289,7 @@ function updateArmyMoney()
     if(globalMoney - totalCost < 0){
       console.log(box);
     }
-    document.getElementById("armyMoney").innerHTML = "Money left :" + (globalMoney - totalCost);
+    document.getElementById("armyMoney").innerHTML = "Budget total restant :" + (globalMoney - totalCost);
 
 }
 
@@ -333,13 +333,13 @@ function updateMoney(box)
     document.getElementById(box.id + "_zombieText").innerHTML = "Zombie bite -" + zombieCost;
     document.getElementById(box.id + "_explosionText").innerHTML =
     "Explosion -" + explosionCost + "("+ getExplosionDamage(document.getElementById(box.id + "_lifeInput").value, document.getElementById(box.id + "_damageInput").value) + " damage)";
-    document.getElementById(box.id + "_moneyAmount").innerHTML = "Cost :" + (money - remainingMoney) + "/" + money + " (" + box.id.split("_")[0]+")";
+    document.getElementById(box.id + "_moneyAmount").innerHTML = "Coût d'un alien : " + (money - remainingMoney) + "/" + money + " (" + box.id.split("_")[0]+")";
     updateArmyMoney();
 }
 
 function explode(object, damage){
   for(let i = 0; i < characters.length; i++){
-    let dmgToChar = damage/(Math.max(1,characters[i].getDistance(object)*Math.sqrt(characters[i].getDistance(object)) - object.getRange()*10));
+    let dmgToChar = damage/(Math.max(1,(characters[i].getDistance(object)- object.getRange()*10)*Math.sqrt(characters[i].getDistance(object)) - object.getRange()*10));
     if(dmgToChar > 5 && characters[i].alive() && object != characters[i]){
       if(characters[i].getType() == object.getType()){
         dmgToChar*=0.5;
