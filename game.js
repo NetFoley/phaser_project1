@@ -206,8 +206,10 @@ function update(){
 
   document.getElementById("alienNbr").innerHTML = "Alien (" + alienAlive + ")";
   document.getElementById("humanNbr").innerHTML = "Human (" + humanAlive + ") ";
-  if(humanAlive <= 0)
+  if(humanAlive <= 0){
     document.getElementById("startButton").innerHTML = "Next level";
+    document.getElementById("startButton").style.fontSize = "1.5em";
+  }
 }
 
 function selectAlien(nbr)
